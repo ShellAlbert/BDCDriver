@@ -1,0 +1,9 @@
+module BDCDrv(clk,reset,led1,led2);
+
+input clk,reset;
+output led1,led2;
+
+power_on_reset u1(clk(.clk),reset(.reset));
+led_drive u2(clk(.clk),reset(.reset),led1(.led1),led2(.led2));
+
+endmodule

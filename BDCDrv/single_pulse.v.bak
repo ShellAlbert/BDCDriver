@@ -1,0 +1,2 @@
+module single_pulse(clk,reset,pulse_out);
+endmodule
