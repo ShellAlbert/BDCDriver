@@ -1,4 +1,4 @@
-module uart_rx(clk,reset,serial_in,parallel_out,done,busy,err);
+module uart_rx(clk,reset,serial_in,parallel_out,done,busy,err,negedge_rxd);
 input clk;
 input reset;
 input serial_in/*synthesis keep*/;
@@ -6,7 +6,8 @@ input serial_in/*synthesis keep*/;
 output reg [7:0] parallel_out;
 output reg done;
 output reg busy;
-output reg err/*synthesis noprune*/;
+output reg err;
+output wire negedge_rxd/*synthesis keep*/;
 
 //finite state machine.
 parameter STATE_IDLE=2'b00;
@@ -15,13 +16,11 @@ parameter STATE_STOP_BIT=2'b10;
 reg [1:0] my_fsm/*synthesis preserve*/;
 
 //shift register for input data.用于下降沿检测
-wire negedge_rxd/*synthesis keep*/;
 //rx线默认为高电平，有起始位时，为低电平。
 //previous_state=1 & current_state=1 结果为1，此时没有起始位。
 //previous_state=1 & current_state=0 结果为0，此时就是下降沿。
 reg [1:0] shift_serial_in;
-
-assign negedge_rxd=shift_serial_in[1]&(~shift_serial_in[0]);
+assign negedge_rxd=shift_serial_in[1]&(~shift_serial_in[0])/*synthesis keep*/;
 
 //temporary store input data.
 reg [7:0] received_data/*synthesis noprune*/;
@@ -50,7 +49,6 @@ begin
 			case(my_fsm)
 				STATE_IDLE: begin
 									done<=1'b0;  
-									err<=1'b0;
 									if(clock_count==4'd8) begin
 																clock_count<=4'd0;
 																my_fsm<=STATE_DATA_BITS;
@@ -87,19 +85,19 @@ begin
 									if(clock_count==4'd15) begin
 																clock_count<=4'd0;
 																my_fsm<=STATE_IDLE;
+																done<=1'b1;
 																busy<=1'b0;
-																//check bit to make sure it's still high in 16xsample period.
-																//if not, error possible occured.
-																if(!(|shift_serial_in)) begin
-																							err<=1'b1;
-																						 end
-																else begin
-																		done<=1'b1;
-																		parallel_out<=received_data;
-																	 end
+																parallel_out<=received_data;
 														   end
 									else begin
 											clock_count<=clock_count+1'b1;
+											//check bit to make sure it's still high in 16xsample period.
+											//if not, error possible occured.
+											//|shift_serial_in 按位与,所有位为1时,=True.
+											if(!(|shift_serial_in)) begin
+																		err<=1'b1;
+																		my_fsm<=STATE_IDLE;
+																	end
 										 end
 								end
 				default:  my_fsm<=STATE_IDLE;

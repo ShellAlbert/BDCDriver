@@ -32,7 +32,7 @@ begin
 					busy<=1'b0;
 					bitIndex<=3'd0;
 					data_in_lock<=8'd00;
-					if(start) begin
+					if(start==1'b1) begin
 								data_in_lock<=data_in;
 								fsm<=START_BIT; 
 							  end

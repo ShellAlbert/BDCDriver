@@ -6,7 +6,7 @@ input serial_in/*synthesis keep*/;
 output reg [7:0] parallel_out;
 output reg done;
 output reg busy;
-output reg err/*synthesis noprune*/;
+output reg err;
 
 //finite state machine.
 parameter STATE_IDLE=2'b00;
@@ -50,7 +50,6 @@ begin
 			case(my_fsm)
 				STATE_IDLE: begin
 									done<=1'b0;  
-									err<=1'b0;
 									if(clock_count==4'd8) begin
 																clock_count<=4'd0;
 																my_fsm<=STATE_DATA_BITS;
@@ -87,19 +86,19 @@ begin
 									if(clock_count==4'd15) begin
 																clock_count<=4'd0;
 																my_fsm<=STATE_IDLE;
+																done<=1'b1;
 																busy<=1'b0;
-																//check bit to make sure it's still high in 16xsample period.
-																//if not, error possible occured.
-																if(!(|shift_serial_in)) begin
-																							err<=1'b1;
-																						 end
-																else begin
-																		done<=1'b1;
-																		parallel_out<=received_data;
-																	 end
+																parallel_out<=received_data;
 														   end
 									else begin
 											clock_count<=clock_count+1'b1;
+											//check bit to make sure it's still high in 16xsample period.
+											//if not, error possible occured.
+											//|shift_serial_in 按位与,所有位为1时,=True.
+											if(!(|shift_serial_in)) begin
+																		err<=1'b1;
+																		my_fsm<=STATE_IDLE;
+																	end
 										 end
 								end
 				default:  my_fsm<=STATE_IDLE;
