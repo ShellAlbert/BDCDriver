@@ -1,1 +1,0 @@
-module rxclk_sync_to_txclk(clk,reset,)
