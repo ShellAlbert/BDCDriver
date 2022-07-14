@@ -1,0 +1,14 @@
+Partition Merge Status : Successful - Thu Apr 28 11:31:14 2022
+Quartus II 64-Bit Version : 13.0.1 Build 232 06/12/2013 SP 1 SJ Full Version
+Revision Name : BDCDrv
+Top-level Entity Name : led_ctl_by_uart
+Family : Cyclone III
+Total logic elements : 1,623 / 81,264 ( 2 % )
+    Total combinational functions : 1,233 / 81,264 ( 2 % )
+    Dedicated logic registers : 964 / 81,264 ( 1 % )
+Total registers : 964
+Total pins : 10 / 296 ( 3 % )
+Total virtual pins : 0
+Total memory bits : 1,966,080 / 2,810,880 ( 70 % )
+Embedded Multiplier 9-bit elements : 0 / 488 ( 0 % )
+Total PLLs : 0 / 4 ( 0 % )

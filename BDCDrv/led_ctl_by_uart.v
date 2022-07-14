@@ -12,18 +12,24 @@ output parse_done_sig;
 wire reset;
 power_on_reset u0 (.clk(clk),//input,49.152MHz.
 					.reset(reset));//output.
+//get 2.4576MHz.
+wire clk_main/*synthesis keep*/;
+clk_prescale inst_clk_prescale(.clk(clk),//input.
+								.reset(reset),//input.
+								.clk_main(clk_main));//output.
 
-reg Rx_En_Sig;
+
+
+reg Rx_En_Sig/*synthesis noprune*/;   
 wire [7:0] RxData;
 wire Rx_Done_Sig;
 
-rx_module u1(.clk(clk),//input,49.152MHz.
+rx_module u1(.clk(clk_main),//input,2.4576MHz.
 			.reset(reset),//input,system reset.
 			.RXD(RXD),//input,physical pin of uart.
 			.Rx_En_Sig(Rx_En_Sig),//input
 			.RxData(RxData),//ouput.
-			.Rx_Done_Sig(Rx_Done_Sig),//output.
-			.bps_clkx4(bps_clkx4));//output.
+			.Rx_Done_Sig(Rx_Done_Sig));//output.
 
 //generate Rx_En_Sig.
 always@(posedge clk or posedge reset)

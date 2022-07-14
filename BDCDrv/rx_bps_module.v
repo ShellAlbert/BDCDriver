@@ -1,40 +1,23 @@
-module rx_bps_module(clk,reset,bps_clk,bps_clkx4);
+module rx_bps_module(clk,reset,bps_clk);
 input clk;
 input reset;
 output bps_clk/*synthesis keep*/;
-output reg bps_clkx4/*synthesis keep*/;
 
-
-//49.152MHz/9600=5120
-//since counter starts from 0, so here is 5120-1=5119.
-reg[15:0] counter;
+//frequency=2.4576MHz/(2*counter)
+//2.4576MHz/9600=256
+//so here,counter=256/2=128.
+//since counter starts from 0, so here is 128-1=127.
+reg[7:0] counter;
 always@(posedge clk or posedge reset)
 begin
 	if(reset)
-		counter<=16'd0;
-	else if(counter==16'd5119)
-		counter<=16'd0;
+		counter<=8'd0;
+	else if(counter==8'd127)
+		counter<=8'd0;
 	else 
 		counter<=counter+1'b1;
 end
 
-//get the center position,5120/2=2560.
-assign bps_clk=(counter==16'd2560)?1'b1:1'b0;
-
-
-//49.152MHz/(9600*4)=128.
-reg[15:0] counter2;
-always@(posedge clk or posedge reset)
-begin
-	if(reset) begin
-				counter2<=16'd0;
-				bps_clkx4<=1'b0;
-			  end
-	else if(counter2==16'd127) begin	
-								counter2<=16'd0;
-								bps_clkx4<=~bps_clkx4;
-							   end
-	else 
-		counter2<=counter2+1'b1;
-end
+//get the center position,128/2=64.
+assign bps_clk=(counter==8'd64)?1'b1:1'b0;
 endmodule

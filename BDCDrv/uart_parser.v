@@ -50,7 +50,6 @@ pwm_module instance2_pwm_module(.clk(clk),//input,49.152MHz
 								.pwm2(motor_pwm[3]),//output,pwm2 of Motor IC.
 								.Done_Sig(M2_Done_Sig));//output, done.
 
-
 always@(posedge clk or posedge reset)
 begin
 	if(reset)	begin
@@ -72,7 +71,7 @@ begin
 													data_buf[counter]<=Data_In;
 													counter<=counter+1'b1;
 												end
-								else if(counter==3'd5)	begin
+								 if(counter==3'd5)	begin
 															counter<=3'd0;
 															//check each bytes.
 															if(data_buf[0]==8'h55 && data_buf[1]==8'haa && data_buf[2]==8'h01)	begin //motor-1.
