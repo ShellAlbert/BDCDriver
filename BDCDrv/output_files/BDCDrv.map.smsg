@@ -1,4 +1,0 @@
-Warning (10268): Verilog HDL information at led_drive.v(35): always construct contains both blocking and non-blocking assignments
-Warning (10268): Verilog HDL information at clk_1hz.v(10): always construct contains both blocking and non-blocking assignments
-Warning (10268): Verilog HDL information at rxclk_sync_to_txclk.v(23): always construct contains both blocking and non-blocking assignments
-Warning (10268): Verilog HDL information at clk_prescale.v(13): always construct contains both blocking and non-blocking assignments
